@@ -1,0 +1,766 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MoneyTracker Pro - Expense Tracker with Budget Insights</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                borderRadius: {
+                    lg: "var(--radius)",
+                    md: "calc(var(--radius) - 2px)",
+                    sm: "calc(var(--radius) - 4px)",
+                },
+                colors: {
+                    background: "var(--background)",
+                    foreground: "var(--foreground)",
+                    card: {
+                        DEFAULT: "var(--card)",
+                        foreground: "var(--card-foreground)",
+                    },
+                    popover: {
+                        DEFAULT: "var(--popover)",
+                        foreground: "var(--popover-foreground)",
+                    },
+                    primary: {
+                        DEFAULT: "var(--primary)",
+                        foreground: "var(--primary-foreground)",
+                    },
+                    secondary: {
+                        DEFAULT: "var(--secondary)",
+                        foreground: "var(--secondary-foreground)",
+                    },
+                    muted: {
+                        DEFAULT: "var(--muted)",
+                        foreground: "var(--muted-foreground)",
+                    },
+                    accent: {
+                        DEFAULT: "var(--accent)",
+                        foreground: "var(--accent-foreground)",
+                    },
+                    destructive: {
+                        DEFAULT: "var(--destructive)",
+                        foreground: "var(--destructive-foreground)",
+                    },
+                    border: "var(--border)",
+                    input: "var(--input)",
+                    ring: "var(--ring)",
+                    chart: {
+                        "1": "var(--chart-1)",
+                        "2": "var(--chart-2)",
+                        "3": "var(--chart-3)",
+                        "4": "var(--chart-4)",
+                        "5": "var(--chart-5)",
+                    }
+                },
+                fontFamily: {
+                    sans: ["var(--font-sans)"],
+                    serif: ["var(--font-serif)"],
+                    mono: ["var(--font-mono)"],
+                }
+            },
+        }
+    };
+    </script>
+    <style>
+        :root {
+            --background: hsl(210 40% 98%);
+            --foreground: hsl(215 25% 27%);
+            --card: hsl(0 0% 100%);
+            --card-foreground: hsl(215 25% 27%);
+            --popover: hsl(0 0% 100%);
+            --popover-foreground: hsl(215 25% 27%);
+            --primary: hsl(221 83% 53%);
+            --primary-foreground: hsl(0 0% 98%);
+            --secondary: hsl(210 40% 96%);
+            --secondary-foreground: hsl(215 25% 27%);
+            --muted: hsl(210 40% 96%);
+            --muted-foreground: hsl(215 13% 65%);
+            --accent: hsl(210 40% 96%);
+            --accent-foreground: hsl(215 25% 27%);
+            --destructive: hsl(0 84% 60%);
+            --destructive-foreground: hsl(0 0% 98%);
+            --border: hsl(214 32% 91%);
+            --input: hsl(214 32% 91%);
+            --ring: hsl(221 83% 53%);
+            --chart-1: hsl(221 83% 53%);
+            --chart-2: hsl(142 76% 36%);
+            --chart-3: hsl(48 96% 53%);
+            --chart-4: hsl(0 84% 60%);
+            --chart-5: hsl(263 70% 50%);
+            --radius: 8px;
+            --font-sans: 'Inter', system-ui, sans-serif;
+        }
+
+        .dark {
+            --background: hsl(222 84% 5%);
+            --foreground: hsl(213 31% 91%);
+            --card: hsl(222 84% 5%);
+            --card-foreground: hsl(213 31% 91%);
+            --popover: hsl(222 84% 5%);
+            --popover-foreground: hsl(213 31% 91%);
+            --primary: hsl(221 83% 53%);
+            --primary-foreground: hsl(222 84% 5%);
+            --secondary: hsl(217 33% 17%);
+            --secondary-foreground: hsl(213 31% 91%);
+            --muted: hsl(217 33% 17%);
+            --muted-foreground: hsl(215 20% 65%);
+            --accent: hsl(217 33% 17%);
+            --accent-foreground: hsl(213 31% 91%);
+            --destructive: hsl(0 63% 31%);
+            --destructive-foreground: hsl(213 31% 91%);
+            --border: hsl(217 33% 17%);
+            --input: hsl(217 33% 17%);
+            --ring: hsl(224 71% 4%);
+            --chart-1: hsl(221 70% 50%);
+            --chart-2: hsl(142 76% 36%);
+            --chart-3: hsl(48 96% 53%);
+            --chart-4: hsl(0 84% 60%);
+            --chart-5: hsl(263 70% 50%);
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: var(--font-sans);
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .budget-progress {
+            background: linear-gradient(90deg, hsl(var(--chart-2)) 0%, hsl(var(--chart-3)) 70%, hsl(var(--chart-4)) 100%);
+        }
+        
+        .income-gradient {
+            background: linear-gradient(135deg, hsl(var(--chart-2)) 0%, hsl(142 76% 45%) 100%);
+        }
+        
+        .expense-gradient {
+            background: linear-gradient(135deg, hsl(var(--chart-4)) 0%, hsl(0 84% 65%) 100%);
+        }
+
+        .category-food { background-color: hsl(25 95% 53%); }
+        .category-transport { background-color: hsl(221 83% 53%); }
+        .category-entertainment { background-color: hsl(263 70% 50%); }
+        .category-utilities { background-color: hsl(142 76% 36%); }
+        .category-shopping { background-color: hsl(340 82% 52%); }
+        .category-healthcare { background-color: hsl(48 96% 53%); }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-background text-foreground min-h-screen">
+    <!-- @COMPONENT: Header [Navigation and user profile] -->
+    <header class="bg-card border-b border-border shadow-sm">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                            <i class="fas fa-chart-line text-primary-foreground text-sm"></i>
+                        </div>
+                        <h1 class="text-xl font-bold text-foreground">MoneyTracker Pro</h1>
+                    </div>
+                </div>
+                
+                <nav class="hidden md:flex items-center space-x-6">
+                    <a href="#" class="text-primary font-medium">Dashboard</a>
+                    <a href="#" class="text-muted-foreground hover:text-foreground transition-colors">Transactions</a>
+                    <a href="#" class="text-muted-foreground hover:text-foreground transition-colors">Budgets</a>
+                    <a href="#" class="text-muted-foreground hover:text-foreground transition-colors">Reports</a>
+                </nav>
+                
+                <div class="flex items-center space-x-4">
+                    <button class="bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm font-medium hover:bg-primary/90 transition-colors">
+                        <i class="fas fa-plus mr-2"></i>Add Transaction
+                    </button>
+                    <div class="w-8 h-8 bg-muted rounded-full flex items-center justify-center">
+                        <i class="fas fa-user text-muted-foreground text-sm"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- @END_COMPONENT: Header -->
+
+    <div class="flex min-h-screen">
+        <!-- @COMPONENT: Sidebar [Navigation menu for different sections] -->
+        <aside class="hidden lg:flex lg:flex-col lg:w-64 bg-card border-r border-border">
+            <div class="flex-1 px-4 py-6 space-y-1">
+                <div class="space-y-1">
+                    <div class="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                        Overview
+                    </div>
+                    <a href="#" class="bg-accent text-accent-foreground flex items-center px-3 py-2 rounded-md text-sm font-medium">
+                        <i class="fas fa-tachometer-alt mr-3 text-sm"></i>
+                        Dashboard
+                    </a>
+                    <a href="#" class="text-muted-foreground hover:text-foreground hover:bg-accent flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                        <i class="fas fa-exchange-alt mr-3 text-sm"></i>
+                        Transactions
+                    </a>
+                </div>
+                
+                <div class="space-y-1 pt-4">
+                    <div class="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                        Planning
+                    </div>
+                    <a href="#" class="text-muted-foreground hover:text-foreground hover:bg-accent flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                        <i class="fas fa-bullseye mr-3 text-sm"></i>
+                        Budgets
+                    </a>
+                    <a href="#" class="text-muted-foreground hover:text-foreground hover:bg-accent flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                        <i class="fas fa-piggy-bank mr-3 text-sm"></i>
+                        Goals
+                    </a>
+                </div>
+                
+                <div class="space-y-1 pt-4">
+                    <div class="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                        Analysis
+                    </div>
+                    <a href="#" class="text-muted-foreground hover:text-foreground hover:bg-accent flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                        <i class="fas fa-chart-bar mr-3 text-sm"></i>
+                        Reports
+                    </a>
+                    <a href="#" class="text-muted-foreground hover:text-foreground hover:bg-accent flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                        <i class="fas fa-chart-pie mr-3 text-sm"></i>
+                        Analytics
+                    </a>
+                </div>
+                
+                <div class="space-y-1 pt-4">
+                    <div class="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                        Tools
+                    </div>
+                    <a href="#" class="text-muted-foreground hover:text-foreground hover:bg-accent flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                        <i class="fas fa-download mr-3 text-sm"></i>
+                        Export Data
+                    </a>
+                    <a href="#" class="text-muted-foreground hover:text-foreground hover:bg-accent flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                        <i class="fas fa-cog mr-3 text-sm"></i>
+                        Settings
+                    </a>
+                </div>
+            </div>
+        </aside>
+        <!-- @END_COMPONENT: Sidebar -->
+
+        <!-- @COMPONENT: MainContent [Primary dashboard area with charts and metrics] -->
+        <main class="flex-1 bg-background">
+            <!-- Dashboard Header -->
+            <div class="bg-card border-b border-border px-4 py-6 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-2xl font-bold text-foreground">Financial Dashboard</h2>
+                        <p class="text-muted-foreground mt-1" data-bind="currentDate">December 2024</p>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <select class="bg-input border border-border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring">
+                            <option>This Month</option>
+                            <option>Last Month</option>
+                            <option>Last 3 Months</option>
+                            <option>This Year</option>
+                        </select>
+                        <button class="bg-secondary text-secondary-foreground px-4 py-2 rounded-md text-sm font-medium hover:bg-secondary/80 transition-colors">
+                            <i class="fas fa-download mr-2"></i>Export
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="px-4 py-6 sm:px-6 lg:px-8">
+                <!-- Key Metrics Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <!-- @COMPONENT: MetricCard [Income display] -->
+                    <div class="bg-card rounded-lg border border-border p-6 shadow-sm animate-fade-in">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-muted-foreground">Total Income</p>
+                                <p class="text-3xl font-bold text-foreground mt-2" data-bind="totalIncome">$5,240.00</p>
+                                <p class="text-sm text-green-600 mt-1">
+                                    <i class="fas fa-arrow-up mr-1"></i>
+                                    <span data-bind="incomeChange">+12.5%</span> from last month
+                                </p>
+                            </div>
+                            <div class="w-12 h-12 income-gradient rounded-lg flex items-center justify-center">
+                                <i class="fas fa-arrow-up text-white text-lg"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- @END_COMPONENT: MetricCard -->
+
+                    <!-- @COMPONENT: MetricCard [Expense display] -->
+                    <div class="bg-card rounded-lg border border-border p-6 shadow-sm animate-fade-in">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-muted-foreground">Total Expenses</p>
+                                <p class="text-3xl font-bold text-foreground mt-2" data-bind="totalExpenses">$3,890.00</p>
+                                <p class="text-sm text-red-600 mt-1">
+                                    <i class="fas fa-arrow-up mr-1"></i>
+                                    <span data-bind="expenseChange">+8.2%</span> from last month
+                                </p>
+                            </div>
+                            <div class="w-12 h-12 expense-gradient rounded-lg flex items-center justify-center">
+                                <i class="fas fa-arrow-down text-white text-lg"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- @END_COMPONENT: MetricCard -->
+
+                    <!-- @COMPONENT: MetricCard [Net savings display] -->
+                    <div class="bg-card rounded-lg border border-border p-6 shadow-sm animate-fade-in">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-muted-foreground">Net Savings</p>
+                                <p class="text-3xl font-bold text-foreground mt-2" data-bind="netSavings">$1,350.00</p>
+                                <p class="text-sm text-green-600 mt-1">
+                                    <i class="fas fa-arrow-up mr-1"></i>
+                                    <span data-bind="savingsChange">+25.8%</span> from last month
+                                </p>
+                            </div>
+                            <div class="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
+                                <i class="fas fa-piggy-bank text-primary-foreground text-lg"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- @END_COMPONENT: MetricCard -->
+                </div>
+
+                <!-- Charts and Budget Section -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                    <!-- @COMPONENT: ExpenseChart [Spending over time visualization] -->
+                    <div class="lg:col-span-2 bg-card rounded-lg border border-border p-6 shadow-sm">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-lg font-semibold text-foreground">Spending Trends</h3>
+                            <div class="flex space-x-2">
+                                <button class="bg-primary text-primary-foreground px-3 py-1 rounded text-sm">Week</button>
+                                <button class="text-muted-foreground px-3 py-1 rounded text-sm hover:bg-accent">Month</button>
+                                <button class="text-muted-foreground px-3 py-1 rounded text-sm hover:bg-accent">Year</button>
+                            </div>
+                        </div>
+                        <div class="h-80 bg-muted/50 rounded-lg flex items-center justify-center">
+                            <!-- @FUNCTIONALITY: Chart.js line chart showing expense trends over time -->
+                            <div class="text-center">
+                                <i class="fas fa-chart-line text-4xl text-muted-foreground mb-2"></i>
+                                <p class="text-muted-foreground" data-implementation="Chart.js line chart component">Interactive spending trend chart will render here</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- @END_COMPONENT: ExpenseChart -->
+
+                    <!-- @COMPONENT: BudgetOverview [Monthly budget progress] -->
+                    <div class="bg-card rounded-lg border border-border p-6 shadow-sm">
+                        <h3 class="text-lg font-semibold text-foreground mb-6">Budget Overview</h3>
+                        <div class="space-y-4">
+                            <!-- @MAP: budgetCategories.map(category => ( -->
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm font-medium text-foreground" data-bind="category.name">Food & Dining</span>
+                                    <span class="text-sm text-muted-foreground">
+                                        <span data-bind="category.spent">$420</span> / <span data-bind="category.budget">$500</span>
+                                    </span>
+                                </div>
+                                <div class="w-full bg-muted rounded-full h-2">
+                                    <div class="category-food h-2 rounded-full" style="width: 84%"></div>
+                                </div>
+                                <p class="text-xs text-muted-foreground mt-1"><span data-bind="category.remaining">$80</span> remaining</p>
+                            </div>
+
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm font-medium text-foreground" data-bind="category.name">Transportation</span>
+                                    <span class="text-sm text-muted-foreground">
+                                        <span data-bind="category.spent">$180</span> / <span data-bind="category.budget">$300</span>
+                                    </span>
+                                </div>
+                                <div class="w-full bg-muted rounded-full h-2">
+                                    <div class="category-transport h-2 rounded-full" style="width: 60%"></div>
+                                </div>
+                                <p class="text-xs text-muted-foreground mt-1"><span data-bind="category.remaining">$120</span> remaining</p>
+                            </div>
+
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm font-medium text-foreground" data-bind="category.name">Entertainment</span>
+                                    <span class="text-sm text-muted-foreground">
+                                        <span data-bind="category.spent">$150</span> / <span data-bind="category.budget">$200</span>
+                                    </span>
+                                </div>
+                                <div class="w-full bg-muted rounded-full h-2">
+                                    <div class="category-entertainment h-2 rounded-full" style="width: 75%"></div>
+                                </div>
+                                <p class="text-xs text-muted-foreground mt-1"><span data-bind="category.remaining">$50</span> remaining</p>
+                            </div>
+
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm font-medium text-foreground" data-bind="category.name">Utilities</span>
+                                    <span class="text-sm text-muted-foreground">
+                                        <span data-bind="category.spent">$95</span> / <span data-bind="category.budget">$150</span>
+                                    </span>
+                                </div>
+                                <div class="w-full bg-muted rounded-full h-2">
+                                    <div class="category-utilities h-2 rounded-full" style="width: 63%"></div>
+                                </div>
+                                <p class="text-xs text-muted-foreground mt-1"><span data-bind="category.remaining">$55</span> remaining</p>
+                            </div>
+                            <!-- @END_MAP )) -->
+                        </div>
+                        
+                        <button class="w-full mt-4 bg-secondary text-secondary-foreground py-2 rounded-md text-sm font-medium hover:bg-secondary/80 transition-colors">
+                            Manage Budgets
+                        </button>
+                    </div>
+                    <!-- @END_COMPONENT: BudgetOverview -->
+                </div>
+
+                <!-- Recent Transactions and Category Breakdown -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                    <!-- @COMPONENT: RecentTransactions [Latest transaction list] -->
+                    <div class="bg-card rounded-lg border border-border p-6 shadow-sm">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-lg font-semibold text-foreground">Recent Transactions</h3>
+                            <a href="#" class="text-sm text-primary hover:underline">View All</a>
+                        </div>
+                        <div class="space-y-4">
+                            <!-- @MAP: recentTransactions.map(transaction => ( -->
+                            <div class="flex items-center justify-between p-3 hover:bg-accent rounded-lg transition-colors" data-mock="true">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 category-food rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-utensils text-white text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium text-foreground" data-bind="transaction.description">Starbucks Coffee</p>
+                                        <p class="text-xs text-muted-foreground" data-bind="transaction.category">Food & Dining</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-sm font-medium text-destructive" data-bind="transaction.amount">-$5.49</p>
+                                    <p class="text-xs text-muted-foreground" data-bind="transaction.date">Dec 15</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between p-3 hover:bg-accent rounded-lg transition-colors" data-mock="true">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 category-transport rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-gas-pump text-white text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium text-foreground" data-bind="transaction.description">Shell Gas Station</p>
+                                        <p class="text-xs text-muted-foreground" data-bind="transaction.category">Transportation</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-sm font-medium text-destructive" data-bind="transaction.amount">-$48.20</p>
+                                    <p class="text-xs text-muted-foreground" data-bind="transaction.date">Dec 14</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between p-3 hover:bg-accent rounded-lg transition-colors" data-mock="true">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-briefcase text-white text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium text-foreground" data-bind="transaction.description">Salary Deposit</p>
+                                        <p class="text-xs text-muted-foreground" data-bind="transaction.category">Income</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-sm font-medium text-green-600" data-bind="transaction.amount">+$2,500.00</p>
+                                    <p class="text-xs text-muted-foreground" data-bind="transaction.date">Dec 13</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center justify-between p-3 hover:bg-accent rounded-lg transition-colors" data-mock="true">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 category-entertainment rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-film text-white text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium text-foreground" data-bind="transaction.description">Netflix Subscription</p>
+                                        <p class="text-xs text-muted-foreground" data-bind="transaction.category">Entertainment</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-sm font-medium text-destructive" data-bind="transaction.amount">-$15.99</p>
+                                    <p class="text-xs text-muted-foreground" data-bind="transaction.date">Dec 12</p>
+                                </div>
+                            </div>
+                            <!-- @END_MAP )) -->
+                        </div>
+                    </div>
+                    <!-- @END_COMPONENT: RecentTransactions -->
+
+                    <!-- @COMPONENT: CategoryBreakdown [Expense distribution chart] -->
+                    <div class="bg-card rounded-lg border border-border p-6 shadow-sm">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-lg font-semibold text-foreground">Expense Categories</h3>
+                            <select class="bg-input border border-border rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-ring">
+                                <option>This Month</option>
+                                <option>Last Month</option>
+                            </select>
+                        </div>
+                        
+                        <div class="h-48 bg-muted/50 rounded-lg flex items-center justify-center mb-6">
+                            <!-- @FUNCTIONALITY: Chart.js doughnut chart showing category breakdown -->
+                            <div class="text-center">
+                                <i class="fas fa-chart-pie text-4xl text-muted-foreground mb-2"></i>
+                                <p class="text-muted-foreground" data-implementation="Chart.js doughnut chart component">Category breakdown chart will render here</p>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <!-- @MAP: categoryBreakdown.map(category => ( -->
+                            <div class="flex items-center justify-between" data-mock="true">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-3 h-3 category-food rounded-full"></div>
+                                    <span class="text-sm text-foreground" data-bind="category.name">Food & Dining</span>
+                                </div>
+                                <span class="text-sm font-medium text-foreground" data-bind="category.percentage">32%</span>
+                            </div>
+                            
+                            <div class="flex items-center justify-between" data-mock="true">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-3 h-3 category-transport rounded-full"></div>
+                                    <span class="text-sm text-foreground" data-bind="category.name">Transportation</span>
+                                </div>
+                                <span class="text-sm font-medium text-foreground" data-bind="category.percentage">25%</span>
+                            </div>
+                            
+                            <div class="flex items-center justify-between" data-mock="true">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-3 h-3 category-shopping rounded-full"></div>
+                                    <span class="text-sm text-foreground" data-bind="category.name">Shopping</span>
+                                </div>
+                                <span class="text-sm font-medium text-foreground" data-bind="category.percentage">18%</span>
+                            </div>
+                            
+                            <div class="flex items-center justify-between" data-mock="true">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-3 h-3 category-entertainment rounded-full"></div>
+                                    <span class="text-sm text-foreground" data-bind="category.name">Entertainment</span>
+                                </div>
+                                <span class="text-sm font-medium text-foreground" data-bind="category.percentage">15%</span>
+                            </div>
+                            
+                            <div class="flex items-center justify-between" data-mock="true">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-3 h-3 category-utilities rounded-full"></div>
+                                    <span class="text-sm text-foreground" data-bind="category.name">Others</span>
+                                </div>
+                                <span class="text-sm font-medium text-foreground" data-bind="category.percentage">10%</span>
+                            </div>
+                            <!-- @END_MAP )) -->
+                        </div>
+                    </div>
+                    <!-- @END_COMPONENT: CategoryBreakdown -->
+                </div>
+
+                <!-- Quick Actions and Insights -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- @COMPONENT: QuickActions [Action buttons for common tasks] -->
+                    <div class="bg-card rounded-lg border border-border p-6 shadow-sm">
+                        <h3 class="text-lg font-semibold text-foreground mb-4">Quick Actions</h3>
+                        <div class="space-y-3">
+                            <button class="w-full bg-primary text-primary-foreground py-3 px-4 rounded-md text-sm font-medium hover:bg-primary/90 transition-colors flex items-center justify-center">
+                                <i class="fas fa-plus mr-2"></i>
+                                Add Income
+                            </button>
+                            <button class="w-full bg-destructive text-destructive-foreground py-3 px-4 rounded-md text-sm font-medium hover:bg-destructive/90 transition-colors flex items-center justify-center">
+                                <i class="fas fa-minus mr-2"></i>
+                                Add Expense
+                            </button>
+                            <button class="w-full bg-secondary text-secondary-foreground py-3 px-4 rounded-md text-sm font-medium hover:bg-secondary/80 transition-colors flex items-center justify-center">
+                                <i class="fas fa-bullseye mr-2"></i>
+                                Set Budget
+                            </button>
+                            <button class="w-full bg-accent text-accent-foreground py-3 px-4 rounded-md text-sm font-medium hover:bg-accent/80 transition-colors flex items-center justify-center">
+                                <i class="fas fa-file-pdf mr-2"></i>
+                                Export Report
+                            </button>
+                        </div>
+                    </div>
+                    <!-- @END_COMPONENT: QuickActions -->
+
+                    <!-- @COMPONENT: MonthlyInsights [AI-generated insights and tips] -->
+                    <div class="lg:col-span-2 bg-card rounded-lg border border-border p-6 shadow-sm">
+                        <h3 class="text-lg font-semibold text-foreground mb-4">Monthly Insights</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-start space-x-3 p-4 bg-green-50 dark:bg-green-950/20 rounded-lg border border-green-200 dark:border-green-800" data-mock="true">
+                                <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-thumbs-up text-white text-sm"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-green-800 dark:text-green-200">Great job on savings!</p>
+                                    <p class="text-sm text-green-600 dark:text-green-300 mt-1">You're saving 25% more than last month. Keep up the excellent work!</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start space-x-3 p-4 bg-yellow-50 dark:bg-yellow-950/20 rounded-lg border border-yellow-200 dark:border-yellow-800" data-mock="true">
+                                <div class="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-exclamation-triangle text-white text-sm"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-yellow-800 dark:text-yellow-200">Watch your food spending</p>
+                                    <p class="text-sm text-yellow-600 dark:text-yellow-300 mt-1">You've spent 84% of your food budget. Consider meal planning to save more.</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start space-x-3 p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800" data-mock="true">
+                                <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <i class="fas fa-lightbulb text-white text-sm"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-blue-800 dark:text-blue-200">Optimize your subscriptions</p>
+                                    <p class="text-sm text-blue-600 dark:text-blue-300 mt-1">You have 5 active subscriptions totaling $89/month. Review for potential savings.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- @END_COMPONENT: MonthlyInsights -->
+                </div>
+            </div>
+        </main>
+        <!-- @END_COMPONENT: MainContent -->
+    </div>
+
+    <!-- @COMPONENT: AddTransactionModal [Modal for adding new transactions] -->
+    <div id="addTransactionModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+        <div class="bg-card rounded-lg border border-border p-6 w-full max-w-md mx-4 shadow-xl">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-foreground">Add Transaction</h3>
+                <button onclick="closeModal()" class="text-muted-foreground hover:text-foreground">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form class="space-y-4" data-implementation="Should validate form before submission">
+                <div>
+                    <label class="block text-sm font-medium text-foreground mb-2">Transaction Type</label>
+                    <div class="flex space-x-4">
+                        <label class="flex items-center">
+                            <input type="radio" name="type" value="income" class="text-primary focus:ring-primary">
+                            <span class="ml-2 text-sm text-foreground">Income</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="type" value="expense" class="text-primary focus:ring-primary" checked>
+                            <span class="ml-2 text-sm text-foreground">Expense</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-foreground mb-2">Amount</label>
+                    <input type="number" placeholder="0.00" class="w-full px-3 py-2 bg-input border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-ring text-foreground">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-foreground mb-2">Description</label>
+                    <input type="text" placeholder="Enter description" class="w-full px-3 py-2 bg-input border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-ring text-foreground">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-foreground mb-2">Category</label>
+                    <select class="w-full px-3 py-2 bg-input border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-ring text-foreground">
+                        <option>Food & Dining</option>
+                        <option>Transportation</option>
+                        <option>Entertainment</option>
+                        <option>Shopping</option>
+                        <option>Utilities</option>
+                        <option>Healthcare</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-foreground mb-2">Date</label>
+                    <input type="date" class="w-full px-3 py-2 bg-input border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-ring text-foreground">
+                </div>
+                
+                <div class="flex space-x-3 pt-4">
+                    <button type="button" onclick="closeModal()" class="flex-1 bg-secondary text-secondary-foreground py-2 px-4 rounded-md text-sm font-medium hover:bg-secondary/80 transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit" class="flex-1 bg-primary text-primary-foreground py-2 px-4 rounded-md text-sm font-medium hover:bg-primary/90 transition-colors">
+                        Add Transaction
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: AddTransactionModal -->
+
+    <!-- @COMPONENT: Toast [Notification system] -->
+    <div id="toast" class="fixed top-4 right-4 bg-card border border-border rounded-lg shadow-lg p-4 max-w-sm transform translate-x-full transition-transform duration-300 z-50">
+        <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                <i class="fas fa-check text-white text-sm"></i>
+            </div>
+            <div>
+                <p class="text-sm font-medium text-foreground">Transaction Added</p>
+                <p class="text-sm text-muted-foreground">Your expense has been recorded successfully.</p>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: Toast -->
+
+    <script>
+        // TODO: Implement business logic, API calls, and state management
+        // TODO: Integrate Chart.js for data visualizations
+        // TODO: Implement Firebase data persistence
+        // TODO: Add form validation and error handling
+        
+        (function() {
+            // Modal management
+            window.openModal = function() {
+                document.getElementById('addTransactionModal').classList.remove('hidden');
+            };
+            
+            window.closeModal = function() {
+                document.getElementById('addTransactionModal').classList.add('hidden');
+            };
+            
+            // Toast notifications
+            window.showToast = function(message, type = 'success') {
+                const toast = document.getElementById('toast');
+                toast.classList.remove('translate-x-full');
+                setTimeout(() => {
+                    toast.classList.add('translate-x-full');
+                }, 3000);
+            };
+            
+            // Add event listeners for quick actions
+            document.addEventListener('DOMContentLoaded', function() {
+                const addTransactionButtons = document.querySelectorAll('button');
+                addTransactionButtons.forEach(button => {
+                    if (button.textContent.includes('Add Transaction')) {
+                        button.addEventListener('click', openModal);
+                    }
+                });
+            });
+            
+            // Demo functionality for showing interactivity
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.hover\\:bg-accent')) {
+                    // Highlight clicked transaction
+                    const transaction = e.target.closest('.hover\\:bg-accent');
+                    transaction.classList.add('bg-accent');
+                    setTimeout(() => {
+                        transaction.classList.remove('bg-accent');
+                    }, 200);
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
