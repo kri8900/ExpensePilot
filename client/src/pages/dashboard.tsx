@@ -9,6 +9,7 @@ import CategoryBreakdown from "@/components/dashboard/category-breakdown";
 import QuickActions from "@/components/dashboard/quick-actions";
 import MonthlyInsights from "@/components/dashboard/monthly-insights";
 import AddTransactionModal from "@/components/modals/add-transaction-modal";
+import SetBudgetModal from "@/components/modals/set-budget-modal";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -17,20 +18,14 @@ import { format } from "date-fns";
 
 export default function Dashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState("this-month");
   
   const currentMonth = format(new Date(), "yyyy-MM");
 
   const { data: summary = {}, isLoading: summaryLoading } = useQuery({
     queryKey: [`/api/dashboard/summary?month=${currentMonth}`],
-    staleTime: 0, // Always refetch
-    gcTime: 0, // Don't cache
   });
-
-  // Debug logging
-  console.log("Dashboard summary data:", summary);
-  console.log("Summary loading:", summaryLoading);
-  console.log("Query key:", [`/api/dashboard/summary?month=${currentMonth}`]);
 
   const handleExport = () => {
     window.open(`/api/export/csv`, '_blank');
@@ -120,7 +115,10 @@ export default function Dashboard() {
 
             {/* Quick Actions and Insights */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <QuickActions onAddTransaction={() => setIsModalOpen(true)} />
+              <QuickActions 
+              onAddTransaction={() => setIsModalOpen(true)} 
+              onSetBudget={() => setIsBudgetModalOpen(true)}
+            />
               <div className="lg:col-span-2">
                 <MonthlyInsights />
               </div>
@@ -132,6 +130,11 @@ export default function Dashboard() {
       <AddTransactionModal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
+      />
+      
+      <SetBudgetModal 
+        isOpen={isBudgetModalOpen} 
+        onClose={() => setIsBudgetModalOpen(false)} 
       />
     </div>
   );

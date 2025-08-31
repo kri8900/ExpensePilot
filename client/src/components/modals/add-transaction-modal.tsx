@@ -70,8 +70,6 @@ export default function AddTransactionModal({ isOpen, onClose }: AddTransactionM
       // Force immediate refetch
       queryClient.refetchQueries({ queryKey: [`/api/dashboard/summary?month=${currentMonth}`] });
       
-      console.log("Cache invalidated for month:", currentMonth);
-      
       toast({
         title: "Transaction Added",
         description: "Your transaction has been recorded successfully.",

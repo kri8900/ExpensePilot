@@ -4,9 +4,10 @@ import { Plus, Minus, Target, FileText } from "lucide-react";
 
 interface QuickActionsProps {
   onAddTransaction: () => void;
+  onSetBudget: () => void;
 }
 
-export default function QuickActions({ onAddTransaction }: QuickActionsProps) {
+export default function QuickActions({ onAddTransaction, onSetBudget }: QuickActionsProps) {
   const handleExportReport = () => {
     window.open('/api/export/csv', '_blank');
   };
@@ -38,6 +39,7 @@ export default function QuickActions({ onAddTransaction }: QuickActionsProps) {
           <Button 
             variant="secondary" 
             className="w-full"
+            onClick={onSetBudget}
             data-testid="button-set-budget"
           >
             <Target className="mr-2 h-4 w-4" />
