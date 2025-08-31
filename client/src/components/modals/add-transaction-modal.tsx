@@ -45,6 +45,9 @@ export default function AddTransactionModal({ isOpen, onClose }: AddTransactionM
     defaultValues: {
       type: "expense",
       date: format(new Date(), "yyyy-MM-dd"),
+      categoryId: "cat-1", // Default to first category
+      amount: "",
+      description: "",
     },
   });
 
@@ -74,6 +77,8 @@ export default function AddTransactionModal({ isOpen, onClose }: AddTransactionM
   });
 
   const onSubmit = (data: FormData) => {
+    console.log("Form submission data:", data);
+    console.log("Form errors:", errors);
     mutation.mutate(data);
   };
 
@@ -142,12 +147,12 @@ export default function AddTransactionModal({ isOpen, onClose }: AddTransactionM
           
           <div className="space-y-2">
             <Label htmlFor="category">Category</Label>
-            <Select onValueChange={(value) => setValue("categoryId", value)}>
+            <Select onValueChange={(value) => setValue("categoryId", value)} defaultValue="cat-1">
               <SelectTrigger data-testid="select-category">
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
               <SelectContent>
-                {categories?.map((category) => (
+                {categories.map((category) => (
                   <SelectItem key={category.id} value={category.id}>
                     {category.name}
                   </SelectItem>
