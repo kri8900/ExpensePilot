@@ -98,7 +98,7 @@ For full-stack deployment with database, consider:
 MIT License - see LICENSE file for details.
 
 Screenshots.
-<img width="1965" height="843" alt="Screenshot 2025-08-31 152832" src="https://github.com/user-attachments/assets/ca33091d-6bd6-4e0a-9352-37b638919c9e" />
+
 <img width="1348" height="669" alt="Screenshot 2025-08-31 163441" src="https://github.com/user-attachments/assets/e486f2a8-2708-4f94-b5e1-33734c6ece65" />
 <img width="1390" height="550" alt="Screenshot 2025-08-31 163431" src="https://github.com/user-attachments/assets/47c2532f-cc55-4387-a8e8-92e3af0edc12" />
 <img width="1348" height="746" alt="Screenshot 2025-08-31 163453" src="https://github.com/user-attachments/assets/b6635315-3bf1-4295-975e-7b97640513c4" />
