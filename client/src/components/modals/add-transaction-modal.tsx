@@ -30,6 +30,7 @@ type FormData = z.infer<typeof formSchema>;
 export default function AddTransactionModal({ isOpen, onClose }: AddTransactionModalProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const currentMonth = format(new Date(), "yyyy-MM");
   
   const { data: categories = [] } = useQuery({
     queryKey: ["/api/categories"],
@@ -61,8 +62,12 @@ export default function AddTransactionModal({ isOpen, onClose }: AddTransactionM
       return apiRequest("POST", "/api/transactions", data);
     },
     onSuccess: () => {
+      // Invalidate all related queries to refresh the dashboard
       queryClient.invalidateQueries({ queryKey: ["/api/transactions"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/dashboard/summary", currentMonth] });
       queryClient.invalidateQueries({ queryKey: ["/api/dashboard/summary"] });
+      queryClient.refetchQueries({ queryKey: ["/api/dashboard/summary", currentMonth] });
+      
       toast({
         title: "Transaction Added",
         description: "Your transaction has been recorded successfully.",
