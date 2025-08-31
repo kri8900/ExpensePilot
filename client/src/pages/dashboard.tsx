@@ -22,8 +22,15 @@ export default function Dashboard() {
   const currentMonth = format(new Date(), "yyyy-MM");
 
   const { data: summary = {}, isLoading: summaryLoading } = useQuery({
-    queryKey: ["/api/dashboard/summary", currentMonth],
+    queryKey: [`/api/dashboard/summary?month=${currentMonth}`],
+    staleTime: 0, // Always refetch
+    gcTime: 0, // Don't cache
   });
+
+  // Debug logging
+  console.log("Dashboard summary data:", summary);
+  console.log("Summary loading:", summaryLoading);
+  console.log("Query key:", [`/api/dashboard/summary?month=${currentMonth}`]);
 
   const handleExport = () => {
     window.open(`/api/export/csv`, '_blank');

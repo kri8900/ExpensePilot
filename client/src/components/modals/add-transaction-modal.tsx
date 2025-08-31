@@ -64,9 +64,13 @@ export default function AddTransactionModal({ isOpen, onClose }: AddTransactionM
     onSuccess: () => {
       // Invalidate all related queries to refresh the dashboard
       queryClient.invalidateQueries({ queryKey: ["/api/transactions"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/dashboard/summary", currentMonth] });
       queryClient.invalidateQueries({ queryKey: ["/api/dashboard/summary"] });
-      queryClient.refetchQueries({ queryKey: ["/api/dashboard/summary", currentMonth] });
+      queryClient.removeQueries({ queryKey: [`/api/dashboard/summary?month=${currentMonth}`] });
+      
+      // Force immediate refetch
+      queryClient.refetchQueries({ queryKey: [`/api/dashboard/summary?month=${currentMonth}`] });
+      
+      console.log("Cache invalidated for month:", currentMonth);
       
       toast({
         title: "Transaction Added",
