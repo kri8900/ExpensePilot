@@ -51,6 +51,9 @@ export default function AddTransactionModal({ isOpen, onClose }: AddTransactionM
     },
   });
 
+  // Register categoryId field manually since Select doesn't use register
+  register("categoryId", { required: "Please select a category" });
+
   const transactionType = watch("type");
 
   const mutation = useMutation({
@@ -67,7 +70,8 @@ export default function AddTransactionModal({ isOpen, onClose }: AddTransactionM
       reset();
       onClose();
     },
-    onError: () => {
+    onError: (error) => {
+      console.log("Mutation error:", error);
       toast({
         title: "Error",
         description: "Failed to add transaction. Please try again.",
@@ -79,6 +83,13 @@ export default function AddTransactionModal({ isOpen, onClose }: AddTransactionM
   const onSubmit = (data: FormData) => {
     console.log("Form submission data:", data);
     console.log("Form errors:", errors);
+    console.log("Form is valid:", Object.keys(errors).length === 0);
+    
+    if (Object.keys(errors).length > 0) {
+      console.log("Form has validation errors, not submitting");
+      return;
+    }
+    
     mutation.mutate(data);
   };
 
@@ -147,7 +158,7 @@ export default function AddTransactionModal({ isOpen, onClose }: AddTransactionM
           
           <div className="space-y-2">
             <Label htmlFor="category">Category</Label>
-            <Select onValueChange={(value) => setValue("categoryId", value)} defaultValue="cat-1">
+            <Select onValueChange={(value) => setValue("categoryId", value)} value={watch("categoryId")} defaultValue="cat-1">
               <SelectTrigger data-testid="select-category">
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
