@@ -19,7 +19,9 @@ interface AddTransactionModalProps {
   onClose: () => void;
 }
 
-const formSchema = insertTransactionSchema.extend({
+const formSchema = insertTransactionSchema.omit({
+  userId: true,
+}).extend({
   type: z.enum(["income", "expense"]),
 });
 
