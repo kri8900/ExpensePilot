@@ -51,8 +51,6 @@ export default function AddTransactionModal({ isOpen, onClose }: AddTransactionM
     },
   });
 
-  // Register categoryId field manually since Select doesn't use register
-  register("categoryId", { required: "Please select a category" });
 
   const transactionType = watch("type");
 
@@ -81,17 +79,13 @@ export default function AddTransactionModal({ isOpen, onClose }: AddTransactionM
   });
 
   const onSubmit = (data: FormData) => {
-    console.log("Form submission data:", data);
-    console.log("Form errors:", errors);
-    console.log("Form is valid:", Object.keys(errors).length === 0);
-    
-    if (Object.keys(errors).length > 0) {
-      console.log("Form has validation errors, not submitting");
-      return;
-    }
-    
+    console.log("✅ Form submitted!", data);
     mutation.mutate(data);
   };
+
+  const handleFormSubmit = handleSubmit(onSubmit, (errors) => {
+    console.log("❌ Form validation failed:", errors);
+  });
 
   const handleClose = () => {
     reset();
@@ -108,7 +102,7 @@ export default function AddTransactionModal({ isOpen, onClose }: AddTransactionM
           </DialogDescription>
         </DialogHeader>
         
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleFormSubmit} className="space-y-4">
           <div className="space-y-3">
             <Label>Transaction Type</Label>
             <RadioGroup 
